@@ -40,6 +40,7 @@ public:
       const std::vector<IAssetAccessor::THeader>& headers,
       const std::string& version,
       const std::string& layers,
+      const std::string& filter,
       const std::string& format,
       uint32_t width,
       uint32_t height,
@@ -63,6 +64,7 @@ public:
         _headers(headers),
         _version(version),
         _layers(layers),
+        _filter(filter),
         _format(format) {}
 
   virtual ~WebMapServiceTileProvider() {}
@@ -91,7 +93,8 @@ protected:
         "WMS&"
         "format={format}&styles="
         "&width={width}&height={height}&bbox={minx},{miny},{maxx},{maxy}"
-        "&layers={layers}&crs=EPSG:4326";
+        "&layers={layers}&crs=EPSG:4326"
+        "&cql_filter={filter}";
 
     const auto radiansToDegrees = [](double rad) {
       return std::to_string(CesiumUtility::Math::radiansToDegrees(rad));
@@ -105,6 +108,7 @@ protected:
         {"minx", radiansToDegrees(tileRectangle.getSouth())},
         {"miny", radiansToDegrees(tileRectangle.getWest())},
         {"layers", this->_layers},
+        {"filter", this->_filter},
         {"format", this->_format},
         {"width", std::to_string(this->getWidth())},
         {"height", std::to_string(this->getHeight())}};
@@ -125,6 +129,7 @@ private:
   std::vector<IAssetAccessor::THeader> _headers;
   std::string _version;
   std::string _layers;
+  std::string _filter;
   std::string _format;
 };
 
@@ -355,6 +360,7 @@ WebMapServiceRasterOverlay::createTileProvider(
                 headers,
                 options.version,
                 options.layers,
+                options.filter,
                 options.format,
                 options.tileWidth < 1 ? 1 : uint32_t(options.tileWidth),
                 options.tileHeight < 1 ? 1 : uint32_t(options.tileHeight),
