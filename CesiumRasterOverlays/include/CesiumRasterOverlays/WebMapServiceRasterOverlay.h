@@ -28,6 +28,11 @@ struct WebMapServiceRasterOverlayOptions {
    */
   std::string layers;
 
+/**
+* @filter CQL to request.
+*/
+  std::string filter;
+
   /**
    * @brief The image format to request, expressed as a MIME type to be given to
    * the server. The default is "image/png".
